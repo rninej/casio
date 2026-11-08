@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casio fx-85DE PLUS 1:1 Emulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        casioBody: '#1e242c',
+                        casioBodyDark: '#161a20',
+                        casioBezel: '#0d1013',
+                        casioScreenBg: '#8e9e83',
+                        casioYellow: '#eab308',
+                        casioRed: '#ef4444',
+                        casioBtnDark: '#282f3a',
+                        casioBtnLight: '#cbd5e1',
+                        casioBtnBlue: '#1d4ed8',
+                    },
+                    fontFamily: {
+                        lcd: ['Courier New', 'Courier', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Exact LCD Screen Styling with Dot-Matrix Pattern */
+        .lcd-screen {
+            background-color: #8e9e83;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.04) 50%, transparent 50%);
+            background-size: 100% 3px;
+            box-shadow: inset 3px 3px 8px rgba(0,0,0,0.5), inset -2px -2px 4px rgba(255,255,255,0.25);
+            color: #0d170d;
+            font-family: 'Courier New', monospace;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.12);
+        }
+        
+        /* Realistic Key Bevel & Click Mechanics */
+        .casio-key {
+            transition: all 0.04s ease-in-out;
+            box-shadow: 0 3px 0 #0f1216, 0 4px 5px rgba(0,0,0,0.5);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .casio-key:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #0f1216, 0 2px 2px rgba(0,0,0,0.4);
+        }
+
+        .casio-key-blue {
+            box-shadow: 0 3px 0 #1e3a8a, 0 4px 5px rgba(0,0,0,0.5);
+        }
+        .casio-key-blue:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #1e3a8a, 0 2px 2px rgba(0,0,0,0.4);
+        }
+
+        /* Nav D-Pad Styling */
+        .dpad-btn {
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.6);
+        }
+        .dpad-btn:active {
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+            transform: scale(0.95);
+        }
+
+        /* Photorealistic Solar Panel */
+        .solar-panel {
+            background: linear-gradient(135deg, #1c1111 0%, #3a1a1a 40%, #522323 50%, #1c1111 100%);
+            border: 1px solid #0a0a0a;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* Screen Scrollbar */
+        .calc-scroll::-webkit-scrollbar {
+            height: 3px;
+        }
+        .calc-scroll::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 2px;
+        }
+
+        /* Fluid viewport containment for mobile */
+        html, body {
+            height: 100%;
+            height: -webkit-fill-available;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 h-full w-full flex flex-col items-center justify-center p-1 sm:p-4 text-slate-100 font-sans select-none">
+
+    <!-- Calculator Outer Frame Container with Dynamic Responsive Fit -->
+    <div class="w-full h-full max-w-md max-h-[96vh] sm:max-h-[850px] flex flex-col items-center justify-center p-1">
+        
+        <!-- Header Controls -->
+        <div class="w-full flex justify-between items-center mb-1 px-2 text-xs text-slate-400 shrink-0">
+            <span class="font-bold tracking-wider text-[10px] sm:text-[11px] text-slate-300">CASIO FX-85DE PLUS</span>
+            <button id="soundToggleBtn" class="hover:text-white flex items-center space-x-1 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 text-[10px] sm:text-[11px]">
+                <span id="soundIcon">🔊</span> <span id="soundLabel">Sound ON</span>
+            </button>
+        </div>
+
+        <!-- CALCULATOR BODY -->
+        <div class="w-full h-full flex flex-col justify-between bg-casioBody border-2 border-slate-700 rounded-[1.8rem] sm:rounded-[2.5rem] p-2.5 sm:p-4 shadow-2xl relative overflow-hidden">
+            
+            <!-- BRANDING & SOLAR PANEL -->
+            <div class="flex justify-between items-center mb-1 sm:mb-2 px-1 pt-0.5 shrink-0">
+                <div>
+                    <div class="text-white font-black tracking-wider text-base sm:text-xl leading-none flex items-center gap-1">
+                        CASIO
+                        <span class="text-[8px] sm:text-[9px] font-normal tracking-tight bg-slate-800 text-slate-300 px-1 py-0.5 rounded border border-slate-600">TWO WAY POWER</span>
+                    </div>
+                    <div class="text-[9px] sm:text-[10px] text-slate-400 font-semibold tracking-tight mt-0.5">
+                        <span class="text-blue-400 font-bold">fx-85DE PLUS</span> <span class="text-[8px] sm:text-[9px]">NATURAL-V.P.A.M.</span>
+                    </div>
+                </div>
+
+                <!-- Solar Panel -->
+                <div class="solar-panel w-12 sm:w-16 h-5 sm:h-6 rounded grid grid-cols-4 gap-0.5 p-0.5">
+                    <div class="bg-amber-950/40 border-r border-amber-900/40"></div>
+                    <div class="bg-amber-950/40 border-r border-amber-900/40"></div>
+                    <div class="bg-amber-950/40 border-r border-amber-900/40"></div>
+                    <div class="bg-amber-950/40"></div>
+                </div>
+            </div>
+
+            <!-- LCD DISPLAY AREA -->
+            <div class="bg-casioBezel p-1.5 sm:p-2 rounded-xl mb-1.5 sm:mb-3 border border-slate-800 shrink-0">
+                <div class="lcd-screen rounded-lg p-1.5 sm:p-2 h-20 sm:h-24 flex flex-col justify-between relative overflow-hidden">
+                    
+                    <!-- Top Status Indicators Bar -->
+                    <div class="flex justify-between items-center text-[8px] sm:text-[9px] font-bold tracking-tighter border-b border-black/10 pb-0.5">
+                        <div class="flex space-x-1">
+                            <span id="indShift" class="hidden bg-black text-casioScreenBg px-0.5 rounded leading-none">S</span>
+                            <span id="indAlpha" class="hidden bg-black text-casioScreenBg px-0.5 rounded leading-none">A</span>
+                            <span id="indHyp" class="hidden leading-none">HYP</span>
+                            <span id="indM" class="hidden leading-none">M</span>
+                            <span id="indSto" class="hidden leading-none">STO</span>
+                            <span id="indStat" class="hidden leading-none">STAT</span>
+                        </div>
+                        <div class="flex space-x-1">
+                            <span id="indAngle" class="font-bold leading-none">D</span>
+                            <span id="indFix" class="hidden leading-none">FIX</span>
+                            <span id="indSci" class="hidden leading-none">SCI</span>
+                            <span id="indMath" class="font-bold leading-none">Math</span>
+                        </div>
+                    </div>
+
+                    <!-- Input Line -->
+                    <div class="flex-1 flex flex-col justify-center my-0.5 overflow-hidden">
+                        <div id="inputLine" class="text-right text-xs sm:text-sm tracking-normal font-lcd overflow-x-auto calc-scroll pr-0.5 flex items-center justify-end min-h-[26px] sm:min-h-[32px]">
+                            0
+                        </div>
+                        <div id="previewLine" class="text-right text-[9px] sm:text-[10px] text-slate-800/80 font-lcd h-3 overflow-hidden">
+                            
+                        </div>
+                    </div>
+
+                    <!-- Bottom Result Display -->
+                    <div class="flex justify-between items-end border-t border-black/10 pt-0.5">
+                        <div id="dispModeIndicator" class="text-[7px] sm:text-[8px] opacity-75">
+                            COMP
+                        </div>
+                        <div id="resultLine" class="text-right text-base sm:text-lg font-bold font-lcd text-black tracking-tight leading-none overflow-x-auto calc-scroll max-w-[85%]">
+                            0
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- MAIN CALCULATOR KEYPAD AREA (FLEX EXPANDING) -->
+            <div class="flex-1 flex flex-col justify-between space-y-1 sm:space-y-2 min-h-0">
+
+                <!-- FUNCTION & NAVIGATION PAD SECTION -->
+                <div class="grid grid-cols-5 gap-1 sm:gap-1.5 items-center shrink-0">
+                    <!-- SHIFT -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[7px] sm:text-[8px] text-casioYellow font-bold leading-tight">SHIFT</span>
+                        <button onclick="handleKey('SHIFT')" class="casio-key w-full py-1 bg-casioBtnDark hover:bg-slate-700 text-casioYellow text-[10px] sm:text-[11px] font-bold rounded-md border border-slate-600">SHIFT</button>
+                    </div>
+                    
+                    <!-- ALPHA -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[7px] sm:text-[8px] text-casioRed font-bold leading-tight">ALPHA</span>
+                        <button onclick="handleKey('ALPHA')" class="casio-key w-full py-1 bg-casioBtnDark hover:bg-slate-700 text-casioRed text-[10px] sm:text-[11px] font-bold rounded-md border border-slate-600">ALPHA</button>
+                    </div>
+
+                    <!-- Circular REPLAY Pad -->
+                    <div class="col-span-1 flex justify-center relative my-0">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900 rounded-full border border-slate-600 shadow-inner flex flex-col justify-between items-center p-0.5 relative">
+                            <button onclick="handleNav('UP')" class="dpad-btn w-4 sm:w-5 h-3 sm:h-3.5 bg-slate-700 hover:bg-slate-600 rounded-t-full text-[6px] sm:text-[7px] flex items-center justify-center text-slate-200">▲</button>
+                            <div class="w-full flex justify-between items-center px-0.5">
+                                <button onclick="handleNav('LEFT')" class="dpad-btn w-3 sm:w-3.5 h-4 sm:h-5 bg-slate-700 hover:bg-slate-600 rounded-l-full text-[6px] sm:text-[7px] flex items-center justify-center text-slate-200">◀</button>
+                                <span class="text-[5px] sm:text-[6px] text-slate-400 font-bold tracking-tighter">REPLAY</span>
+                                <button onclick="handleNav('RIGHT')" class="dpad-btn w-3 sm:w-3.5 h-4 sm:h-5 bg-slate-700 hover:bg-slate-600 rounded-r-full text-[6px] sm:text-[7px] flex items-center justify-center text-slate-200">▶</button>
+                            </div>
+                            <button onclick="handleNav('DOWN')" class="dpad-btn w-4 sm:w-5 h-3 sm:h-3.5 bg-slate-700 hover:bg-slate-600 rounded-b-full text-[6px] sm:text-[7px] flex items-center justify-center text-slate-200">▼</button>
+                        </div>
+                    </div>
+
+                    <!-- MODE / SETUP -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[7px] sm:text-[8px] text-casioYellow font-bold leading-tight">SETUP</span>
+                        <button onclick="handleKey('MODE')" class="casio-key w-full py-1 bg-casioBtnDark hover:bg-slate-700 text-slate-200 text-[9px] sm:text-[10px] font-bold rounded-md border border-slate-600">MODE</button>
+                    </div>
+
+                    <!-- ON -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[7px] sm:text-[8px] opacity-0 leading-tight">ON</span>
+                        <button onclick="handleKey('ON')" class="casio-key w-full py-1 bg-casioBtnDark hover:bg-slate-700 text-slate-100 text-[9px] sm:text-[10px] font-bold rounded-md border border-slate-600">ON</button>
+                    </div>
+                </div>
+
+                <!-- SCIENTIFIC FUNCTION KEYS (ROWS 1 TO 3) -->
+                <div class="space-y-1 sm:space-y-1.5 shrink-0">
+                    
+                    <!-- Row 1: Fraction, Sqrt, x^2, x^y, log, ln -->
+                    <div class="grid grid-cols-6 gap-1 text-center">
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">x/y</div>
+                            <button onclick="handleKey('FRAC')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">■/■</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">³√■</div>
+                            <button onclick="handleKey('SQRT')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">√■</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">x³</div>
+                            <button onclick="handleKey('SQR')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">x²</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none"><sup>x</sup>√■</div>
+                            <button onclick="handleKey('POW')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">x<sup>■</sup></button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">10<sup>■</sup></div>
+                            <button onclick="handleKey('LOG')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">log</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">e<sup>■</sup></div>
+                            <button onclick="handleKey('LN')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">ln</button>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: (-), DEG, hyp, sin, cos, tan -->
+                    <div class="grid grid-cols-6 gap-1 text-center">
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">x⁻¹ <span class="text-casioRed">A</span></div>
+                            <button onclick="handleKey('NEG')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">(-)</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">FACT <span class="text-casioRed">B</span></div>
+                            <button onclick="handleKey('DEG')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">° ' "</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">abs <span class="text-casioRed">C</span></div>
+                            <button onclick="handleKey('HYP')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">hyp</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">sin⁻¹ <span class="text-casioRed">D</span></div>
+                            <button onclick="handleKey('SIN')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">sin</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">cos⁻¹ <span class="text-casioRed">E</span></div>
+                            <button onclick="handleKey('COS')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">cos</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">tan⁻¹ <span class="text-casioRed">F</span></div>
+                            <button onclick="handleKey('TAN')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">tan</button>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: STO, ENG, (, ), S<=>D, M+ -->
+                    <div class="grid grid-cols-6 gap-1 text-center">
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">RCL</div>
+                            <button onclick="handleKey('STO')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">STO</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">←</div>
+                            <button onclick="handleKey('ENG')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">ENG</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">%</div>
+                            <button onclick="handleKey('LPAR')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">(</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">, <span class="text-casioRed">X</span></div>
+                            <button onclick="handleKey('RPAR')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">)</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">a b/c <span class="text-casioRed">Y</span></div>
+                            <button onclick="handleKey('SD')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">S⇔D</button>
+                        </div>
+                        <div>
+                            <div class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none">M- <span class="text-casioRed">M</span></div>
+                            <button onclick="handleKey('MPLUS')" class="casio-key w-full py-1 sm:py-0.5 bg-casioBtnDark text-slate-200 rounded text-[9px] sm:text-[10px] font-bold border border-slate-600">M+</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- KEYPAD NUMERIC AND BASIC ARITHMETIC SECTION (FLEX STRETCH FOR MOBILE TOUCH ENHANCEMENT) -->
+                <div class="grid grid-cols-5 gap-1 sm:gap-1.5 flex-1 min-h-0">
+                    
+                    <!-- Row 1: 7, 8, 9, DEL, AC -->
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">CONST</span>
+                        <button onclick="handleKey('7')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">7</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">CONV</span>
+                        <button onclick="handleKey('8')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">8</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">CLR</span>
+                        <button onclick="handleKey('9')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">9</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">INS</span>
+                        <button onclick="handleKey('DEL')" class="casio-key casio-key-blue w-full flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-md border border-blue-700 flex items-center justify-center">DEL</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">OFF</span>
+                        <button onclick="handleKey('AC')" class="casio-key casio-key-blue w-full flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-md border border-blue-700 flex items-center justify-center">AC</button>
+                    </div>
+
+                    <!-- Row 2: 4, 5, 6, *, / -->
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">MATRIX</span>
+                        <button onclick="handleKey('4')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">4</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">VECTOR</span>
+                        <button onclick="handleKey('5')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">5</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">STAT</span>
+                        <button onclick="handleKey('6')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">6</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">nPr</span>
+                        <button onclick="handleKey('*')" class="casio-key w-full flex-1 bg-slate-300 hover:bg-slate-100 text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">×</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">nCr</span>
+                        <button onclick="handleKey('/')" class="casio-key w-full flex-1 bg-slate-300 hover:bg-slate-100 text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">÷</button>
+                    </div>
+
+                    <!-- Row 3: 1, 2, 3, +, - -->
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">S-SUM</span>
+                        <button onclick="handleKey('1')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">1</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">S-VAR</span>
+                        <button onclick="handleKey('2')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">2</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">TEST</span>
+                        <button onclick="handleKey('3')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">3</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">Pol</span>
+                        <button onclick="handleKey('+')" class="casio-key w-full flex-1 bg-slate-300 hover:bg-slate-100 text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">+</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">Rec</span>
+                        <button onclick="handleKey('-')" class="casio-key w-full flex-1 bg-slate-300 hover:bg-slate-100 text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">-</button>
+                    </div>
+
+                    <!-- Row 4: 0, ., EXP, Ans, = -->
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">RND</span>
+                        <button onclick="handleKey('0')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">0</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">Ran#</span>
+                        <button onclick="handleKey('.')" class="casio-key w-full flex-1 bg-slate-200 hover:bg-white text-slate-900 font-bold text-sm sm:text-base rounded-md border border-slate-400 flex items-center justify-center">.</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">π</span>
+                        <button onclick="handleKey('EXP')" class="casio-key w-full flex-1 bg-slate-300 hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-md border border-slate-400 flex items-center justify-center">x10<sup>x</sup></button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">DRG►</span>
+                        <button onclick="handleKey('ANS')" class="casio-key w-full flex-1 bg-slate-300 hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-md border border-slate-400 flex items-center justify-center">Ans</button>
+                    </div>
+                    <div class="flex flex-col items-center h-full">
+                        <span class="text-[6px] sm:text-[7px] text-casioYellow font-bold h-2 sm:h-2.5 leading-none shrink-0">≈</span>
+                        <button onclick="handleKey('=')" class="casio-key casio-key-blue w-full flex-1 bg-blue-700 hover:bg-blue-600 text-white font-bold text-base sm:text-lg rounded-md border border-blue-800 flex items-center justify-center">=</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Sub-labeling -->
+            <div class="mt-1 sm:mt-2 text-center text-[8px] sm:text-[9px] text-slate-400 tracking-widest font-semibold shrink-0">
+                DEUTSCHES MODELL • FX-85DE PLUS 
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT EMULATION ENGINE -->
+<!-- ... existing code -->
